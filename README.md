@@ -4,7 +4,7 @@ Small app that uses RestApi to get information about 100 most famous football te
 ## Technologies used in this project
 
 - Language: Kotlin
-- Jetpack Compose
+- UI: Jetpack Compose
 - Coroutines
 - Retrofit
 - Hilt
