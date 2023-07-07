@@ -23,25 +23,27 @@ class TeamsScreenViewModel @Inject constructor(
 
     fun getTeamsIdByCountryId(id: String) {
         viewModelScope.launch {
-            val idsList = sportsRepository.getTeamsByCountryId(id)
-            when (idsList.status) {
-                SimpleResponse.Status.Success -> {
-                    _state.update { list ->
-                        list.copy(
-                            teamsIdsList = idsList.body.data.map { it.id.toString() }
-                        )
+            if (state.value.teamsIdsList.isEmpty()) {
+                val idsList = sportsRepository.getTeamsByCountryId(id)
+                when (idsList.status) {
+                    SimpleResponse.Status.Success -> {
+                        _state.update { list ->
+                            list.copy(
+                                teamsIdsList = idsList.body.data.map { it.id.toString() }
+                            )
+                        }
+                    }
+                    SimpleResponse.Status.Failure -> {
+                        _state.update {
+                            it.copy(
+                                downloadState = DownloadState.Error
+                            )
+                        }
+                        Log.d("TeamsScreenVM", "getTeamsByCountryId: request failed for id $id")
                     }
                 }
-                SimpleResponse.Status.Failure -> {
-                    _state.update {
-                        it.copy(
-                            downloadState = DownloadState.Error
-                        )
-                    }
-                    Log.d("TeamsScreenVM", "getTeamsByCountryId: request failed for id $id")
-                }
+                getTeamsByTheirId()
             }
-            getTeamsByTheirId()
         }
     }
 
@@ -57,19 +59,21 @@ class TeamsScreenViewModel @Inject constructor(
     }
 
     private fun getTeamById(id: String) {
-        viewModelScope.launch {
-            val team = sportsRepository.getTeamById(id)
+        if (state.value.teamsList.isEmpty()) {
+            viewModelScope.launch {
+                val team = sportsRepository.getTeamById(id)
 
-            when (team.status) {
-                SimpleResponse.Status.Success -> {
-                    _state.update {
-                        it.copy(
-                            teamsList = state.value.teamsList.plus(team.body.data.toTeam())
-                        )
+                when (team.status) {
+                    SimpleResponse.Status.Success -> {
+                        _state.update {
+                            it.copy(
+                                teamsList = state.value.teamsList.plus(team.body.data.toTeam())
+                            )
+                        }
                     }
-                }
-                SimpleResponse.Status.Failure -> {
-                    Log.d("TeamsScreenVM", "getTeamById: was unable to get data for id $id")
+                    SimpleResponse.Status.Failure -> {
+                        Log.d("TeamsScreenVM", "getTeamById: was unable to get data for id $id")
+                    }
                 }
             }
         }
