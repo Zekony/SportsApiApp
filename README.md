@@ -16,6 +16,7 @@ Small app that uses RestApi to get information about 100 most famous football te
  In my app, users can see information about 100 most famous football teams in 12 countries, their players, coach.
 
  ## How it works
+Bacically, i just took all i could from that RestApi and used it to make an app. Sadly infomation about games was unvailable.
 On launch, the app displays a splash screen with an animated logo and a welcome message. 
 The first screen shows a list of flags of 12 countries. By clicking on the flag, the user is directed to the second screen with id of the coutry we clicked on. At this point,  a server request is made with that id and we get list of 100 ids of football clubs in that country. 
 Then we make individual requests for each club ID, so 100 requests  to retrieve information about each team. The clubs are displayed in a list format, similar to the countries, with their logos downloaded using Coil. By clicking on the team's logo we move to the third screen with it's id, and similarly make a server request to get info about team's squad. 
